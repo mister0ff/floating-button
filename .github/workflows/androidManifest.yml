@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Código
+      - name: Checkout do Código
         uses: actions/checkout@v4
 
       - name: Configurar JDK 17
@@ -21,13 +21,13 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Configurar Gradle
-        uses: gradle/actions/setup-gradle@v3
-        with:
-          gradle-version: '8.5'
+      # Isso cria o gradlew no seu ambiente, resolvendo o erro de "file not found"
+      - name: Gerar Gradle Wrapper
+        run: gradle wrapper --gradle-version 8.5
 
+      # Agora usamos o ./gradlew que acabamos de criar
       - name: Compilar APK Debug
-        run: gradle assembleDebug
+        run: ./gradlew assembleDebug --stacktrace
 
       - name: Salvar APK como Artefato
         uses: actions/upload-artifact@v4
