@@ -17,13 +17,15 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: '8.6'
+      # Garante que o gradlew exista e tenha permissão
+      - name: Setup Gradle Wrapper
+        run: |
+          gradle wrapper --gradle-version 8.6
+          chmod +x gradlew
 
+      # O --info vai nos mostrar o erro real se falhar
       - name: Build debug APK
-        run: gradle assembleDebug
+        run: ./gradlew assembleDebug --info
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
