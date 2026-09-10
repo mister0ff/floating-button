@@ -1,34 +1,35 @@
-name: Build APK
+name: Compilar Teclado APK
 
 on:
   push:
-    branches: [ "main" ]
-  workflow_dispatch:
+    branches: [ "main", "master" ]
+  workflow_dispatch: # Permite rodar manualmente no GitHub
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
 
-      - name: Set up JDK 17
+    steps:
+      - name: Baixar codigo do repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar JDK 17
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
           java-version: '17'
+          distribution: 'temurin'
 
-      # Garante que o gradlew exista e tenha permissão
-      - name: Setup Gradle Wrapper
-        run: |
-          gradle wrapper --gradle-version 8.6
-          chmod +x gradlew
+      - name: Configurar Android SDK
+        uses: android-actions/setup-android@v3
 
-      # O --info vai nos mostrar o erro real se falhar
-      - name: Build debug APK
-        run: ./gradlew assembleDebug --info
+      - name: Dar permissao ao Gradle
+        run: chmod +x gradlew
 
-      - name: Upload APK
+      - name: Compilar APK
+        run: ./gradlew assembleDebug
+
+      - name: Salvar o APK para Download
         uses: actions/upload-artifact@v4
         with:
-          name: FloatingButton-debug-apk
+          name: MeuTeclado-APK
           path: app/build/outputs/apk/debug/app-debug.apk
